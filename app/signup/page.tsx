@@ -17,11 +17,17 @@ export default function SignupPage() {
     setLoading(true);
     setError("");
 
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) {
-      setError(error.message);
-    } else {
+      if (error.message.includes("already registered")) {
+        setError("このメールアドレスはすでに登録されています。");
+      } else {
+        setError(error.message);
+      }
+    } else if (data.session) {
       router.push("/");
+    } else {
+      setError("登録完了！届いたメールのリンクをクリックして確認してください。");
     }
     setLoading(false);
   };

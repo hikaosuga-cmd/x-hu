@@ -19,7 +19,13 @@ export default function LoginPage() {
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      setError(error.message);
+      if (error.message === "Email not confirmed") {
+        setError("メールアドレスの確認が完了していません。登録時に届いたメールのリンクをクリックしてください。");
+      } else if (error.message === "Invalid login credentials") {
+        setError("メールアドレスまたはパスワードが違います。");
+      } else {
+        setError(error.message);
+      }
     } else {
       router.push("/");
     }
